@@ -1,5 +1,5 @@
 # Church Management System
-## Chisamba Community Church
+## Restitution Church - Chisamba
 
 A simple, offline-capable church management system built for rural communities with intermittent internet connectivity.
 
