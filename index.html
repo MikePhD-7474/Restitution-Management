@@ -1,0 +1,2786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Restitution Church - Management Dashboard</title>
+<link rel="icon" href="data:,">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 20px 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.church-logo {
+  width: 60px;
+  height: 60px;
+  background: white;
+  border-radius: 12px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.church-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.header-title h1 {
+  font-size: 1.8em;
+  margin-bottom: 5px;
+}
+
+.header-title p {
+  opacity: 0.9;
+  font-size: 0.95em;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-badge {
+  background: rgba(255,255,255,0.2);
+  padding: 10px 20px;
+  border-radius: 25px;
+  backdrop-filter: blur(10px);
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.2);
+  border: 2px solid rgba(255,255,255,0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1400px;
+  margin: 30px auto;
+  padding: 0 20px;
+  padding-bottom: 50px;
+}
+
+/* TABS */
+.tabs {
+  background: white;
+  border-radius: 15px;
+  padding: 10px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 12px 15px;
+  border: none;
+  background: transparent;
+  color: #666;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9em;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+.tab-btn:hover {
+  background: #f0f0f0;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* TAB CONTENT */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.4s;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CARDS */
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  color: #667eea;
+  margin-bottom: 20px;
+  font-size: 1.3em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, var(--color), transparent);
+  opacity: 0.1;
+  border-radius: 0 15px 0 100%;
+}
+
+.stat-card.purple { --color: #667eea; }
+.stat-card.green { --color: #4CAF50; }
+.stat-card.red { --color: #F44336; }
+.stat-card.orange { --color: #FF9800; }
+.stat-card.blue { --color: #2196F3; }
+
+.stat-icon {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+}
+
+.stat-value {
+  font-size: 2.5em;
+  font-weight: 700;
+  color: var(--color);
+  margin-bottom: 5px;
+}
+
+.stat-label {
+  color: #666;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+
+/* FORMS */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1em;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* BUTTONS */
+button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: inherit;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-success {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-danger {
+  background: #F44336;
+  color: white;
+}
+
+.btn-warning {
+  background: #FF9800;
+  color: white;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 0.9em;
+}
+
+/* CHARTS */
+.chart-container {
+  position: relative;
+  height: 350px;
+  margin-top: 20px;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 25px;
+}
+
+/* TABLES */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  overflow-x: auto;
+  display: block;
+}
+
+.data-table thead,
+.data-table tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.data-table th {
+  background: #f5f5f5;
+  padding: 15px 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #e0e0e0;
+  font-size: 0.9em;
+}
+
+.data-table td {
+  padding: 15px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9em;
+}
+
+.data-table tr:hover {
+  background: #f9f9f9;
+}
+
+/* MEMBER CARDS */
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.member-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid #667eea;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+
+.member-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.member-card.inactive {
+  border-left-color: #9E9E9E;
+  opacity: 0.7;
+}
+
+.member-name {
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.member-details {
+  margin: 10px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.member-details div {
+  margin: 5px 0;
+}
+
+.member-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+.status-active {
+  background: #e8f5e9;
+  color: #4CAF50;
+}
+
+.status-inactive {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.status-left {
+  background: #ffebee;
+  color: #F44336;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s;
+}
+
+.modal-content {
+  background: white;
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.modal-header h3 {
+  color: #667eea;
+  font-size: 1.5em;
+}
+
+.close-modal {
+  font-size: 2em;
+  color: #999;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.3s;
+}
+
+.close-modal:hover {
+  color: #333;
+}
+
+/* PROJECT CARDS */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.project-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border-left: 4px solid var(--status-color);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+}
+
+.project-card.not-started { --status-color: #9E9E9E; }
+.project-card.ongoing { --status-color: #2196F3; }
+.project-card.complete { --status-color: #4CAF50; }
+
+.project-title {
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.project-phase {
+  background: #e0e0e0;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8em;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.project-status {
+  display: inline-block;
+  padding: 6px 15px;
+  border-radius: 15px;
+  font-size: 0.85em;
+  font-weight: 600;
+  margin: 10px 0;
+}
+
+.status-not-started {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.status-ongoing {
+  background: #e3f2fd;
+  color: #2196F3;
+}
+
+.status-complete {
+  background: #e8f5e9;
+  color: #4CAF50;
+}
+
+.project-details {
+  margin: 15px 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.project-details div {
+  margin: 8px 0;
+  display: flex;
+  justify-content: space-between;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.5s;
+}
+
+/* MESSAGES */
+.message {
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  animation: slideDown 0.3s;
+}
+
+.message-success {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #4CAF50;
+}
+
+.message-error {
+  background: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #F44336;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* LOGIN */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.login-box {
+  background: white;
+  border-radius: 20px;
+  padding: 50px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  max-width: 450px;
+  width: 100%;
+  text-align: center;
+}
+
+.login-logo {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 20px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;
+  color: white;
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-box h1 {
+  color: #667eea;
+  margin-bottom: 10px;
+  font-size: 2.5em;
+}
+
+.login-box p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .header-left {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-btn {
+    min-width: calc(50% - 5px);
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .projects-grid,
+  .members-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 20px auto;
+    padding: 20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-container">
+  <div class="login-box">
+    <div class="login-logo"><img src="logo.png" alt="Restitution Church"></div>
+    <h1>Restitution</h1>
+    <p>Church Management Dashboard</p>
+    
+    <div id="loginMessage"></div>
+    
+    <div class="form-group" style="text-align: left;">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email">
+    </div>
+    <div class="form-group" style="text-align: left;">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-primary" style="width: 100%;" onclick="login()">
+      Sign In
+    </button>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="appContainer" class="hidden">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="church-logo">
+          <img src="logo.png" alt="Restitution Church">
+        </div>
+        <div class="header-title">
+          <h1>Restitution Church</h1>
+          <p>Management Dashboard</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="user-badge">
+          <span id="userName">User</span> • 
+          <span id="userRole">Viewer</span>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('dashboard')">📊 Dashboard</button>
+      <button class="tab-btn" onclick="showTab('members')">👥 Members</button>
+      <button class="tab-btn" onclick="showTab('attendance')">📋 Attendance</button>
+      <button class="tab-btn" onclick="showTab('visitations')">🚶 Visitations</button>
+      <button class="tab-btn" onclick="showTab('projects')">🏗️ Projects</button>
+      <button class="tab-btn" onclick="showTab('finance')">💰 Finance</button>
+      <button class="tab-btn" onclick="showTab('analytics')">📈 Analytics</button>
+    </div>
+
+    <!-- DASHBOARD TAB -->
+    <div id="dashboard-tab" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card purple">
+          <div class="stat-icon">👥</div>
+          <div class="stat-value" id="dashTotalMembers">0</div>
+          <div class="stat-label">Total Members</div>
+        </div>
+        
+        <div class="stat-card green">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="dashAttendanceRate">0%</div>
+          <div class="stat-label">Avg Attendance Rate</div>
+        </div>
+        
+        <div class="stat-card blue">
+          <div class="stat-icon">🏗️</div>
+          <div class="stat-value" id="dashActiveProjects">0</div>
+          <div class="stat-label">Active Projects</div>
+        </div>
+        
+        <div class="stat-card orange">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value" id="dashNetBalance">K 0</div>
+          <div class="stat-label">Net Balance</div>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="card">
+          <h3>📈 Attendance Trend (Last 8 Weeks)</h3>
+          <div class="chart-container">
+            <canvas id="dashAttendanceChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>💰 Financial Overview</h3>
+          <div class="chart-container">
+            <canvas id="dashFinanceChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🏗️ Recent Projects</h3>
+        <div id="dashRecentProjects"></div>
+      </div>
+    </div>
+
+    <!-- MEMBERS TAB -->
+    <div id="members-tab" class="tab-content">
+      <div class="card">
+        <h3>👥 Add New Member</h3>
+        <div id="memberMessage"></div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Full Name *</label>
+            <input type="text" id="memberName" placeholder="John Banda">
+          </div>
+          <div class="form-group">
+            <label>Phone *</label>
+            <input type="tel" id="memberPhone" placeholder="0977123456">
+          </div>
+          <div class="form-group">
+            <label>Email (Optional)</label>
+            <input type="email" id="memberEmail" placeholder="john@email.com">
+          </div>
+          <div class="form-group">
+            <label>Date of Birth *</label>
+            <input type="date" id="memberDOB">
+          </div>
+          <div class="form-group">
+            <label>Membership Date *</label>
+            <input type="date" id="membershipDate">
+          </div>
+          <div class="form-group">
+            <label>Marital Status</label>
+            <select id="memberMarital">
+              <option>Single</option>
+              <option>Married</option>
+              <option>Widowed</option>
+              <option>Divorced</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Baptized</label>
+            <select id="memberBaptized">
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="memberStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Not Active</option>
+              <option value="Left">Left</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="saveMember()">✅ Save Member</button>
+        <button class="btn-secondary" onclick="clearMemberForm()">Clear Form</button>
+      </div>
+
+      <div class="card">
+        <h3>📋 All Members</h3>
+        <div class="members-grid" id="membersGrid"></div>
+      </div>
+    </div>
+
+    <!-- VISITATIONS TAB -->
+    <div id="visitations-tab" class="tab-content">
+      <div class="card">
+        <h3>🚶 Record Visitation</h3>
+        <div id="visitationMessage"></div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Visit Date *</label>
+            <input type="date" id="visitDate">
+          </div>
+          <div class="form-group">
+            <label>Member Visited *</label>
+            <select id="visitMember">
+              <option value="">Select Member</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Purpose *</label>
+            <select id="visitPurpose">
+              <option>Pastoral Care</option>
+              <option>Follow-up</option>
+              <option>Prayer Request</option>
+              <option>Counseling</option>
+              <option>Hospital Visit</option>
+              <option>Home Visit</option>
+              <option>New Member</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Notes</label>
+          <textarea id="visitNotes" rows="4" placeholder="Additional notes about the visit..."></textarea>
+        </div>
+
+        <button class="btn-primary" onclick="saveVisitation()">✅ Save Visitation</button>
+        <button class="btn-secondary" onclick="clearVisitationForm()">Clear Form</button>
+      </div>
+
+      <div class="card">
+        <h3>📊 Visitation Records</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Member</th>
+              <th>Purpose</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="visitationsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ATTENDANCE TAB -->
+    <div id="attendance-tab" class="tab-content">
+      <div class="card">
+        <h3>📋 Record Weekly Attendance</h3>
+        <div id="attendanceMessage"></div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Service Date</label>
+            <input type="date" id="attendanceDate">
+          </div>
+          <div class="form-group">
+            <label>Service Type</label>
+            <select id="attendanceService">
+              <option>Sunday Service</option>
+              <option>Mid-Week Service</option>
+              <option>Prayer Meeting</option>
+              <option>Youth Service</option>
+              <option>Special Event</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Men</label>
+            <input type="number" id="attendanceMen" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Women</label>
+            <input type="number" id="attendanceWomen" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Youth</label>
+            <input type="number" id="attendanceYouth" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Children</label>
+            <input type="number" id="attendanceChildren" min="0" value="0">
+          </div>
+          <div class="form-group">
+            <label>Visitors</label>
+            <input type="number" id="attendanceVisitors" min="0" value="0">
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="saveAttendance()">✅ Save Attendance Record</button>
+      </div>
+
+      <div class="card">
+        <h3>📊 Attendance Records</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Service</th>
+              <th>Men</th>
+              <th>Women</th>
+              <th>Youth</th>
+              <th>Children</th>
+              <th>Visitors</th>
+              <th>Total</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROJECTS TAB -->
+    <div id="projects-tab" class="tab-content">
+      <div class="card">
+        <h3>🏗️ Add New Project</h3>
+        <div id="projectMessage"></div>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Project Title</label>
+            <input type="text" id="projectTitle" placeholder="e.g., Church Building Extension">
+          </div>
+          <div class="form-group">
+            <label>Project Phase</label>
+            <input type="text" id="projectPhase" placeholder="e.g., Phase 1">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Project Description</label>
+          <textarea id="projectDescription" rows="3" placeholder="Brief description"></textarea>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" id="projectStartDate">
+          </div>
+          <div class="form-group">
+            <label>End Date</label>
+            <input type="date" id="projectEndDate">
+          </div>
+          <div class="form-group">
+            <label>Budget (ZMW)</label>
+            <input type="number" id="projectBudget" step="0.01" placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label>Spent (ZMW)</label>
+            <input type="number" id="projectSpent" step="0.01" placeholder="0.00" value="0">
+          </div>
+          <div class="form-group">
+            <label>Status</label>
+            <select id="projectStatus">
+              <option value="not-started">Not Started</option>
+              <option value="ongoing">Ongoing</option>
+              <option value="complete">Complete</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-primary" onclick="saveProject()">✅ Save Project</button>
+        <button class="btn-secondary" onclick="clearProjectForm()">Clear Form</button>
+      </div>
+
+      <div class="card">
+        <h3>📋 All Projects</h3>
+        <div class="projects-grid" id="projectsGrid"></div>
+      </div>
+    </div>
+
+    <!-- FINANCE TAB -->
+    <div id="finance-tab" class="tab-content">
+      <div class="stats-grid">
+        <div class="stat-card green">
+          <div class="stat-icon">💵</div>
+          <div class="stat-value" id="finTotalGiving">K 0</div>
+          <div class="stat-label">Total Giving</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon">💸</div>
+          <div class="stat-value" id="finTotalExpenses">K 0</div>
+          <div class="stat-label">Total Expenses</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-icon">📊</div>
+          <div class="stat-value" id="finNetBalance">K 0</div>
+          <div class="stat-label">Net Balance</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>💰 Record Giving</h3>
+        <div id="givingMessage"></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="givingDate">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select id="givingType">
+              <option>Offering</option>
+              <option>Tithe</option>
+              <option>Special Offering</option>
+              <option>Donation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount (ZMW)</label>
+            <input type="number" id="givingAmount" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <button class="btn-primary" onclick="saveGiving()">Save Giving</button>
+      </div>
+
+      <div class="card">
+        <h3>💵 Giving Records</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th id="givingActionsHeader" class="hidden">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="givingTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3>💸 Record Expense</h3>
+        <div id="expenseMessage"></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="expenseDate">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="expenseCategory">
+              <option>Utilities</option>
+              <option>Maintenance</option>
+              <option>Supplies</option>
+              <option>Transport</option>
+              <option>Outreach</option>
+              <option>Events</option>
+              <option>Salaries</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Amount (ZMW)</label>
+            <input type="number" id="expenseAmount" step="0.01" placeholder="0.00">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea id="expenseDescription" rows="2"></textarea>
+        </div>
+        <button class="btn-primary" onclick="saveExpense()">Save Expense</button>
+      </div>
+
+      <div class="card">
+        <h3>💸 Expense Records</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Category</th>
+              <th>Amount</th>
+              <th>Description</th>
+              <th id="expenseActionsHeader" class="hidden">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="expenseTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div id="analytics-tab" class="tab-content">
+      <div class="card">
+        <h3>📊 Attendance Analytics</h3>
+        <div class="charts-grid">
+          <div>
+            <h4 style="margin-bottom: 15px;">Monthly Attendance</h4>
+            <div class="chart-container">
+              <canvas id="monthlyAttendanceChart"></canvas>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin-bottom: 15px;">Quarterly Comparison</h4>
+            <div class="chart-container">
+              <canvas id="quarterlyAttendanceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>👥 Attendance Breakdown by Category</h3>
+        <div class="chart-container">
+          <canvas id="categoryBreakdownChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🏗️ Projects Overview</h3>
+        <div class="charts-grid">
+          <div>
+            <h4 style="margin-bottom: 15px;">Budget vs Spending</h4>
+            <div class="chart-container">
+              <canvas id="projectBudgetChart"></canvas>
+            </div>
+          </div>
+          <div>
+            <h4 style="margin-bottom: 15px;">Project Status Distribution</h4>
+            <div class="chart-container">
+              <canvas id="projectStatusChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>💰 Financial Trends</h3>
+        <div class="chart-container">
+          <canvas id="financeTrendChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MEMBER MODAL -->
+<div id="editMemberModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✏️ Edit Member</h3>
+      <span class="close-modal" onclick="closeEditMemberModal()">&times;</span>
+    </div>
+    <div id="editMemberMessage"></div>
+    <input type="hidden" id="editMemberId">
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="editMemberName">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="editMemberPhone">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="editMemberEmail">
+      </div>
+      <div class="form-group">
+        <label>Date of Birth</label>
+        <input type="date" id="editMemberDOB">
+      </div>
+      <div class="form-group">
+        <label>Membership Date</label>
+        <input type="date" id="editMembershipDate">
+      </div>
+      <div class="form-group">
+        <label>Marital Status</label>
+        <select id="editMemberMarital">
+          <option>Single</option>
+          <option>Married</option>
+          <option>Widowed</option>
+          <option>Divorced</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Baptized</label>
+        <select id="editMemberBaptized">
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="editMemberStatus">
+          <option value="Active">Active</option>
+          <option value="Inactive">Not Active</option>
+          <option value="Left">Left</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-success" onclick="updateMember()">💾 Update Member</button>
+    <button class="btn-secondary" onclick="closeEditMemberModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- EDIT PROJECT MODAL -->
+<div id="editProjectModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✏️ Edit Project</h3>
+      <span class="close-modal" onclick="closeEditProjectModal()">&times;</span>
+    </div>
+    <div id="editProjectMessage"></div>
+    <input type="hidden" id="editProjectId">
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Project Title</label>
+        <input type="text" id="editProjectTitle">
+      </div>
+      <div class="form-group">
+        <label>Phase</label>
+        <input type="text" id="editProjectPhase">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="editProjectDescription" rows="3"></textarea>
+    </div>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Start Date</label>
+        <input type="date" id="editProjectStartDate">
+      </div>
+      <div class="form-group">
+        <label>End Date</label>
+        <input type="date" id="editProjectEndDate">
+      </div>
+      <div class="form-group">
+        <label>Budget (ZMW)</label>
+        <input type="number" id="editProjectBudget" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Spent (ZMW)</label>
+        <input type="number" id="editProjectSpent" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Status</label>
+        <select id="editProjectStatus">
+          <option value="not-started">Not Started</option>
+          <option value="ongoing">Ongoing</option>
+          <option value="complete">Complete</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-success" onclick="updateProject()">💾 Update Project</button>
+    <button class="btn-secondary" onclick="closeEditProjectModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- EDIT GIVING MODAL -->
+<div id="editGivingModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✏️ Edit Giving</h3>
+      <span class="close-modal" onclick="closeEditGivingModal()">&times;</span>
+    </div>
+    <div id="editGivingMessage"></div>
+    <input type="hidden" id="editGivingId">
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="editGivingDate">
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select id="editGivingType">
+          <option>Offering</option>
+          <option>Tithe</option>
+          <option>Special Offering</option>
+          <option>Donation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount (ZMW)</label>
+        <input type="number" id="editGivingAmount" step="0.01">
+      </div>
+    </div>
+
+    <button class="btn-success" onclick="updateGiving()">💾 Update</button>
+    <button class="btn-secondary" onclick="closeEditGivingModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- EDIT EXPENSE MODAL -->
+<div id="editExpenseModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✏️ Edit Expense</h3>
+      <span class="close-modal" onclick="closeEditExpenseModal()">&times;</span>
+    </div>
+    <div id="editExpenseMessage"></div>
+    <input type="hidden" id="editExpenseId">
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="editExpenseDate">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="editExpenseCategory">
+          <option>Utilities</option>
+          <option>Maintenance</option>
+          <option>Supplies</option>
+          <option>Transport</option>
+          <option>Outreach</option>
+          <option>Events</option>
+          <option>Salaries</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Amount (ZMW)</label>
+        <input type="number" id="editExpenseAmount" step="0.01">
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Description</label>
+      <textarea id="editExpenseDescription" rows="2"></textarea>
+    </div>
+
+    <button class="btn-success" onclick="updateExpense()">💾 Update</button>
+    <button class="btn-secondary" onclick="closeEditExpenseModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- EDIT VISITATION MODAL -->
+<div id="editVisitationModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>✏️ Edit Visitation</h3>
+      <span class="close-modal" onclick="closeEditVisitationModal()">&times;</span>
+    </div>
+    <div id="editVisitationMessage"></div>
+    <input type="hidden" id="editVisitationId">
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Visit Date</label>
+        <input type="date" id="editVisitDate">
+      </div>
+      <div class="form-group">
+        <label>Member Visited</label>
+        <select id="editVisitMember"></select>
+      </div>
+      <div class="form-group">
+        <label>Purpose</label>
+        <select id="editVisitPurpose">
+          <option>Pastoral Care</option>
+          <option>Follow-up</option>
+          <option>Prayer Request</option>
+          <option>Counseling</option>
+          <option>Hospital Visit</option>
+          <option>Home Visit</option>
+          <option>New Member</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Notes</label>
+      <textarea id="editVisitNotes" rows="4"></textarea>
+    </div>
+
+    <button class="btn-success" onclick="updateVisitation()">💾 Update</button>
+    <button class="btn-secondary" onclick="closeEditVisitationModal()">Cancel</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, doc, getDoc, getDocs, deleteDoc, updateDoc }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* ================= FIREBASE CONFIG ================= */
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCeXG19B1WZzwZsXqAGOyryWKnXKf2FiNI",
+  authDomain: "restitution-management.firebaseapp.com",
+  projectId: "restitution-management",
+  storageBucket: "restitution-management.appspot.com",
+  messagingSenderId: "805158555715",
+  appId: "1:805158555715:web:9d742f6d82f6e4a4f244f6"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const churchPath = "churches/restitution_chisamba";
+
+/* ================= GLOBAL STATE ================= */
+
+let currentUser = null;
+let currentUserRole = "viewer";
+let allMembers = [];
+let allVisitations = [];
+let allAttendance = [];
+let allProjects = [];
+let allGiving = [];
+let allExpenses = [];
+
+let charts = {};
+
+/* ================= LOGIN ================= */
+
+window.login = async () => {
+  try {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    
+    if (!email || !password) {
+      showMessage("loginMessage", "Please enter email and password", "error");
+      return;
+    }
+    
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    showMessage("loginMessage", "Login failed: " + error.message, "error");
+  }
+};
+
+window.logout = async () => {
+  if (confirm("Are you sure you want to logout?")) {
+    Object.values(charts).forEach(chart => chart?.destroy());
+    await signOut(auth);
+  }
+};
+
+/* ================= AUTH STATE ================= */
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        currentUserRole = userDoc.data().role || "viewer";
+        document.getElementById("userName").textContent = userDoc.data().name || user.email;
+        document.getElementById("userRole").textContent = currentUserRole.charAt(0).toUpperCase() + currentUserRole.slice(1);
+      }
+    } catch (error) {
+      console.error("Error loading user:", error);
+    }
+    
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appContainer").classList.remove("hidden");
+    
+    // Show/hide edit options based on role
+    if (currentUserRole === "admin") {
+      document.getElementById("givingActionsHeader").classList.remove("hidden");
+      document.getElementById("expenseActionsHeader").classList.remove("hidden");
+    }
+    
+    setupRealtimeListeners();
+    setTodayDates();
+  } else {
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("appContainer").classList.add("hidden");
+  }
+});
+
+/* ================= REALTIME LISTENERS ================= */
+
+function setupRealtimeListeners() {
+  // Members
+  onSnapshot(collection(db, churchPath + "/members"), (snap) => {
+    allMembers = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    loadMembersGrid();
+    updateMembersDropdown();
+    updateDashboard();
+  });
+
+  // Visitations
+  onSnapshot(collection(db, churchPath + "/visitations"), (snap) => {
+    allVisitations = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(v => v.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    loadVisitationsTable();
+  });
+
+  // Attendance
+  onSnapshot(collection(db, churchPath + "/attendance"), (snap) => {
+    allAttendance = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(a => a.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    updateDashboard();
+    loadAttendanceTable();
+    updateAnalytics();
+  });
+
+  // Projects
+  onSnapshot(collection(db, churchPath + "/projects"), (snap) => {
+    allProjects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateDashboard();
+    loadProjectsGrid();
+    updateAnalytics();
+  });
+
+  // Giving
+  onSnapshot(collection(db, churchPath + "/giving"), (snap) => {
+    allGiving = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(g => g.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    updateFinanceStats();
+    loadGivingTable();
+    updateAnalytics();
+  });
+
+  // Expenses
+  onSnapshot(collection(db, churchPath + "/expenses"), (snap) => {
+    allExpenses = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+      .filter(e => e.date)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    updateFinanceStats();
+    loadExpenseTable();
+    updateAnalytics();
+  });
+}
+
+/* ================= MEMBERS ================= */
+
+window.saveMember = async () => {
+  try {
+    const name = document.getElementById("memberName").value.trim();
+    const phone = document.getElementById("memberPhone").value.trim();
+    const email = document.getElementById("memberEmail").value.trim();
+    const dob = document.getElementById("memberDOB").value;
+    const membershipDate = document.getElementById("membershipDate").value;
+    const maritalStatus = document.getElementById("memberMarital").value;
+    const baptized = document.getElementById("memberBaptized").value;
+    const status = document.getElementById("memberStatus").value;
+    
+    if (!name || !phone || !dob || !membershipDate) {
+      showMessage("memberMessage", "Please fill in required fields (*)", "error");
+      return;
+    }
+    
+    await addDoc(collection(db, churchPath + "/members"), {
+      name,
+      phone,
+      email,
+      dob,
+      membershipDate,
+      maritalStatus,
+      baptized,
+      status,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("memberMessage", "Member added successfully!", "success");
+    clearMemberForm();
+  } catch (error) {
+    showMessage("memberMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.clearMemberForm = () => {
+  document.getElementById("memberName").value = "";
+  document.getElementById("memberPhone").value = "";
+  document.getElementById("memberEmail").value = "";
+  document.getElementById("memberDOB").value = "";
+  document.getElementById("membershipDate").value = "";
+  document.getElementById("memberMarital").selectedIndex = 0;
+  document.getElementById("memberBaptized").selectedIndex = 0;
+  document.getElementById("memberStatus").selectedIndex = 0;
+};
+
+function loadMembersGrid() {
+  const grid = document.getElementById("membersGrid");
+  if (!grid) return;
+  
+  if (allMembers.length === 0) {
+    grid.innerHTML = '<p style="color: #999;">No members yet.</p>';
+    return;
+  }
+  
+  grid.innerHTML = allMembers.map(m => `
+    <div class="member-card ${m.status === 'Active' ? '' : 'inactive'}">
+      <div class="member-name">${m.name}</div>
+      <span class="member-status status-${m.status.toLowerCase()}">${m.status.toUpperCase()}</span>
+      
+      <div class="member-details">
+        <div>📞 ${m.phone}</div>
+        ${m.email ? `<div>📧 ${m.email}</div>` : ''}
+        <div>🎂 ${new Date(m.dob).toLocaleDateString('en-GB')}</div>
+        <div>📅 Joined: ${new Date(m.membershipDate).toLocaleDateString('en-GB')}</div>
+        <div>💑 ${m.maritalStatus}</div>
+        <div>💧 Baptized: ${m.baptized}</div>
+      </div>
+      
+      <div style="margin-top: 15px;">
+        <button class="btn-warning btn-sm" onclick="openEditMemberModal('${m.id}')">✏️ Edit</button>
+        <button class="btn-danger btn-sm" onclick="deleteMember('${m.id}')">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.openEditMemberModal = (id) => {
+  const member = allMembers.find(m => m.id === id);
+  if (!member) return;
+  
+  document.getElementById("editMemberId").value = id;
+  document.getElementById("editMemberName").value = member.name;
+  document.getElementById("editMemberPhone").value = member.phone;
+  document.getElementById("editMemberEmail").value = member.email || "";
+  document.getElementById("editMemberDOB").value = member.dob;
+  document.getElementById("editMembershipDate").value = member.membershipDate;
+  document.getElementById("editMemberMarital").value = member.maritalStatus;
+  document.getElementById("editMemberBaptized").value = member.baptized;
+  document.getElementById("editMemberStatus").value = member.status;
+  
+  document.getElementById("editMemberModal").style.display = "block";
+};
+
+window.closeEditMemberModal = () => {
+  document.getElementById("editMemberModal").style.display = "none";
+};
+
+window.updateMember = async () => {
+  try {
+    const id = document.getElementById("editMemberId").value;
+    const name = document.getElementById("editMemberName").value.trim();
+    const phone = document.getElementById("editMemberPhone").value.trim();
+    const email = document.getElementById("editMemberEmail").value.trim();
+    const dob = document.getElementById("editMemberDOB").value;
+    const membershipDate = document.getElementById("editMembershipDate").value;
+    const maritalStatus = document.getElementById("editMemberMarital").value;
+    const baptized = document.getElementById("editMemberBaptized").value;
+    const status = document.getElementById("editMemberStatus").value;
+    
+    if (!name || !phone || !dob || !membershipDate) {
+      showMessage("editMemberMessage", "Please fill in required fields", "error");
+      return;
+    }
+    
+    await updateDoc(doc(db, churchPath + "/members", id), {
+      name,
+      phone,
+      email,
+      dob,
+      membershipDate,
+      maritalStatus,
+      baptized,
+      status,
+      updatedAt: serverTimestamp()
+    });
+    
+    showMessage("editMemberMessage", "Member updated!", "success");
+    setTimeout(() => closeEditMemberModal(), 1500);
+  } catch (error) {
+    showMessage("editMemberMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.deleteMember = async (id) => {
+  if (confirm("Delete this member? This cannot be undone.")) {
+    await deleteDoc(doc(db, churchPath + "/members", id));
+    showMessage("memberMessage", "Member deleted", "success");
+  }
+};
+
+function updateMembersDropdown() {
+  const select = document.getElementById("visitMember");
+  const editSelect = document.getElementById("editVisitMember");
+  
+  const options = '<option value="">Select Member</option>' + 
+    allMembers.filter(m => m.status === 'Active').map(m => 
+      `<option value="${m.name}">${m.name}</option>`
+    ).join('');
+  
+  if (select) select.innerHTML = options;
+  if (editSelect) editSelect.innerHTML = options;
+}
+
+/* ================= VISITATIONS ================= */
+
+window.saveVisitation = async () => {
+  try {
+    const date = document.getElementById("visitDate").value;
+    const member = document.getElementById("visitMember").value;
+    const purpose = document.getElementById("visitPurpose").value;
+    const notes = document.getElementById("visitNotes").value.trim();
+    
+    if (!date || !member || !purpose) {
+      showMessage("visitationMessage", "Please fill in required fields (*)", "error");
+      return;
+    }
+    
+    await addDoc(collection(db, churchPath + "/visitations"), {
+      date,
+      member,
+      purpose,
+      notes,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("visitationMessage", "Visitation recorded!", "success");
+    clearVisitationForm();
+  } catch (error) {
+    showMessage("visitationMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.clearVisitationForm = () => {
+  document.getElementById("visitDate").value = new Date().toISOString().split('T')[0];
+  document.getElementById("visitMember").selectedIndex = 0;
+  document.getElementById("visitPurpose").selectedIndex = 0;
+  document.getElementById("visitNotes").value = "";
+};
+
+function loadVisitationsTable() {
+  const tbody = document.getElementById("visitationsTableBody");
+  if (!tbody) return;
+  
+  if (allVisitations.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No visitation records yet.</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = allVisitations.map(v => `
+    <tr>
+      <td>${new Date(v.date).toLocaleDateString('en-GB')}</td>
+      <td>${v.member}</td>
+      <td>${v.purpose}</td>
+      <td>${v.notes || '-'}</td>
+      <td>
+        <button class="btn-warning btn-sm" onclick="openEditVisitationModal('${v.id}')">✏️ Edit</button>
+        <button class="btn-danger btn-sm" onclick="deleteVisitation('${v.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+window.openEditVisitationModal = (id) => {
+  const visitation = allVisitations.find(v => v.id === id);
+  if (!visitation) return;
+  
+  document.getElementById("editVisitationId").value = id;
+  document.getElementById("editVisitDate").value = visitation.date;
+  document.getElementById("editVisitMember").value = visitation.member;
+  document.getElementById("editVisitPurpose").value = visitation.purpose;
+  document.getElementById("editVisitNotes").value = visitation.notes || "";
+  
+  document.getElementById("editVisitationModal").style.display = "block";
+};
+
+window.closeEditVisitationModal = () => {
+  document.getElementById("editVisitationModal").style.display = "none";
+};
+
+window.updateVisitation = async () => {
+  try {
+    const id = document.getElementById("editVisitationId").value;
+    const date = document.getElementById("editVisitDate").value;
+    const member = document.getElementById("editVisitMember").value;
+    const purpose = document.getElementById("editVisitPurpose").value;
+    const notes = document.getElementById("editVisitNotes").value.trim();
+    
+    if (!date || !member || !purpose) {
+      showMessage("editVisitationMessage", "Please fill in required fields", "error");
+      return;
+    }
+    
+    await updateDoc(doc(db, churchPath + "/visitations", id), {
+      date,
+      member,
+      purpose,
+      notes,
+      updatedAt: serverTimestamp()
+    });
+    
+    showMessage("editVisitationMessage", "Visitation updated!", "success");
+    setTimeout(() => closeEditVisitationModal(), 1500);
+  } catch (error) {
+    showMessage("editVisitationMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.deleteVisitation = async (id) => {
+  if (confirm("Delete this visitation record?")) {
+    await deleteDoc(doc(db, churchPath + "/visitations", id));
+    showMessage("visitationMessage", "Record deleted", "success");
+  }
+};
+
+/* ================= DASHBOARD ================= */
+
+function updateDashboard() {
+  // Total Members
+  const activeMembers = allMembers.filter(m => m.status === 'Active').length;
+  document.getElementById("dashTotalMembers").textContent = activeMembers;
+  
+  // Average Attendance Rate
+  if (allAttendance.length > 0 && activeMembers > 0) {
+    const recentAttendance = allAttendance.slice(0, 4);
+    const avgTotal = recentAttendance.reduce((sum, a) => 
+      sum + (a.men + a.women + a.youth + a.children), 0) / recentAttendance.length;
+    const rate = ((avgTotal / activeMembers) * 100).toFixed(1);
+    document.getElementById("dashAttendanceRate").textContent = rate + "%";
+  }
+  
+  // Active Projects
+  const activeProjects = allProjects.filter(p => p.status === "ongoing").length;
+  document.getElementById("dashActiveProjects").textContent = activeProjects;
+  
+  // Net Balance
+  const totalGiving = allGiving.reduce((sum, g) => sum + (g.amount || 0), 0);
+  const totalExpenses = allExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const netBalance = totalGiving - totalExpenses;
+  document.getElementById("dashNetBalance").textContent = "K " + netBalance.toFixed(2);
+  
+  // Charts
+  renderDashAttendanceChart();
+  renderDashFinanceChart();
+  renderRecentProjects();
+}
+
+function renderDashAttendanceChart() {
+  const canvas = document.getElementById("dashAttendanceChart");
+  if (!canvas) return;
+  
+  if (charts.dashAttendance) charts.dashAttendance.destroy();
+  
+  const last8 = allAttendance.slice(0, 8).reverse();
+  const labels = last8.map(a => new Date(a.date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' }));
+  const data = last8.map(a => a.men + a.women + a.youth + a.children);
+  
+  charts.dashAttendance = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Total Attendance",
+        data,
+        borderColor: "#667eea",
+        backgroundColor: "rgba(102, 126, 234, 0.1)",
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function renderDashFinanceChart() {
+  const canvas = document.getElementById("dashFinanceChart");
+  if (!canvas) return;
+  
+  if (charts.dashFinance) charts.dashFinance.destroy();
+  
+  const totalGiving = allGiving.reduce((sum, g) => sum + (g.amount || 0), 0);
+  const totalExpenses = allExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+  
+  charts.dashFinance = new Chart(canvas, {
+    type: "doughnut",
+    data: {
+      labels: ["Giving", "Expenses"],
+      datasets: [{
+        data: [totalGiving, totalExpenses],
+        backgroundColor: ["#4CAF50", "#F44336"]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function renderRecentProjects() {
+  const container = document.getElementById("dashRecentProjects");
+  if (!container) return;
+  
+  const recent = allProjects.slice(0, 3);
+  
+  if (recent.length === 0) {
+    container.innerHTML = '<p style="color: #999;">No projects yet.</p>';
+    return;
+  }
+  
+  container.innerHTML = recent.map(p => {
+    const progress = p.budget > 0 ? ((p.spent / p.budget) * 100).toFixed(1) : 0;
+    return `
+      <div style="margin-bottom: 15px; padding: 15px; background: #f9f9f9; border-radius: 10px;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+          <strong>${p.title}</strong>
+          <span class="project-status status-${p.status}">${p.status.replace('-', ' ')}</span>
+        </div>
+        <div style="font-size: 0.9em; color: #666;">
+          Budget: K ${p.budget.toFixed(2)} • Spent: K ${p.spent.toFixed(2)}
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${Math.min(progress, 100)}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ================= ATTENDANCE ================= */
+
+window.saveAttendance = async () => {
+  try {
+    const date = document.getElementById("attendanceDate").value;
+    const service = document.getElementById("attendanceService").value;
+    const men = parseInt(document.getElementById("attendanceMen").value) || 0;
+    const women = parseInt(document.getElementById("attendanceWomen").value) || 0;
+    const youth = parseInt(document.getElementById("attendanceYouth").value) || 0;
+    const children = parseInt(document.getElementById("attendanceChildren").value) || 0;
+    const visitors = parseInt(document.getElementById("attendanceVisitors").value) || 0;
+    
+    if (!date) {
+      showMessage("attendanceMessage", "Please select a date", "error");
+      return;
+    }
+    
+    const total = men + women + youth + children + visitors;
+    
+    await addDoc(collection(db, churchPath + "/attendance"), {
+      date,
+      service,
+      men,
+      women,
+      youth,
+      children,
+      visitors,
+      total,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("attendanceMessage", "Attendance recorded!", "success");
+    clearAttendanceForm();
+  } catch (error) {
+    showMessage("attendanceMessage", "Error: " + error.message, "error");
+  }
+};
+
+function clearAttendanceForm() {
+  document.getElementById("attendanceMen").value = "0";
+  document.getElementById("attendanceWomen").value = "0";
+  document.getElementById("attendanceYouth").value = "0";
+  document.getElementById("attendanceChildren").value = "0";
+  document.getElementById("attendanceVisitors").value = "0";
+}
+
+function loadAttendanceTable() {
+  const tbody = document.getElementById("attendanceTableBody");
+  if (!tbody) return;
+  
+  if (allAttendance.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: #999;">No attendance records yet.</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = allAttendance.map(a => `
+    <tr>
+      <td>${new Date(a.date).toLocaleDateString('en-GB')}</td>
+      <td>${a.service}</td>
+      <td>${a.men}</td>
+      <td>${a.women}</td>
+      <td>${a.youth}</td>
+      <td>${a.children}</td>
+      <td>${a.visitors}</td>
+      <td><strong>${a.total}</strong></td>
+      <td>
+        <button class="btn-danger btn-sm" onclick="deleteAttendance('${a.id}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+window.deleteAttendance = async (id) => {
+  if (confirm("Delete this attendance record?")) {
+    await deleteDoc(doc(db, churchPath + "/attendance", id));
+    showMessage("attendanceMessage", "Record deleted", "success");
+  }
+};
+
+/* ================= PROJECTS ================= */
+
+window.saveProject = async () => {
+  try {
+    const title = document.getElementById("projectTitle").value.trim();
+    const phase = document.getElementById("projectPhase").value.trim();
+    const description = document.getElementById("projectDescription").value.trim();
+    const startDate = document.getElementById("projectStartDate").value;
+    const endDate = document.getElementById("projectEndDate").value;
+    const budget = parseFloat(document.getElementById("projectBudget").value) || 0;
+    const spent = parseFloat(document.getElementById("projectSpent").value) || 0;
+    const status = document.getElementById("projectStatus").value;
+    
+    if (!title || !startDate || !endDate) {
+      showMessage("projectMessage", "Please fill in required fields", "error");
+      return;
+    }
+    
+    if (budget <= 0) {
+      showMessage("projectMessage", "Budget must be greater than 0", "error");
+      return;
+    }
+    
+    await addDoc(collection(db, churchPath + "/projects"), {
+      title,
+      phase,
+      description,
+      startDate,
+      endDate,
+      budget,
+      spent,
+      status,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("projectMessage", "Project saved!", "success");
+    clearProjectForm();
+  } catch (error) {
+    showMessage("projectMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.clearProjectForm = () => {
+  document.getElementById("projectTitle").value = "";
+  document.getElementById("projectPhase").value = "";
+  document.getElementById("projectDescription").value = "";
+  document.getElementById("projectStartDate").value = "";
+  document.getElementById("projectEndDate").value = "";
+  document.getElementById("projectBudget").value = "";
+  document.getElementById("projectSpent").value = "0";
+  document.getElementById("projectStatus").value = "not-started";
+};
+
+function loadProjectsGrid() {
+  const grid = document.getElementById("projectsGrid");
+  if (!grid) return;
+  
+  if (allProjects.length === 0) {
+    grid.innerHTML = '<p style="color: #999;">No projects yet.</p>';
+    return;
+  }
+  
+  grid.innerHTML = allProjects.map(p => {
+    const progress = p.budget > 0 ? ((p.spent / p.budget) * 100).toFixed(1) : 0;
+    
+    return `
+      <div class="project-card ${p.status}">
+        <div class="project-title">${p.title}</div>
+        <span class="project-phase">${p.phase}</span>
+        <span class="project-status status-${p.status}">
+          ${p.status.replace('-', ' ').toUpperCase()}
+        </span>
+        
+        <div class="project-details">
+          <div><span>Duration:</span><span>${new Date(p.startDate).toLocaleDateString('en-GB')} - ${new Date(p.endDate).toLocaleDateString('en-GB')}</span></div>
+          <div><span>Budget:</span><span>K ${p.budget.toFixed(2)}</span></div>
+          <div><span>Spent:</span><span>K ${p.spent.toFixed(2)}</span></div>
+          <div><span>Remaining:</span><span>K ${(p.budget - p.spent).toFixed(2)}</span></div>
+        </div>
+        
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${Math.min(progress, 100)}%"></div>
+        </div>
+        <div style="text-align: center; margin-top: 5px; font-size: 0.85em; color: #666;">
+          ${progress}% Complete
+        </div>
+        
+        ${p.description ? `<p style="margin-top: 15px; font-size: 0.9em; color: #666;">${p.description}</p>` : ''}
+        
+        <div style="margin-top: 15px;">
+          <button class="btn-warning btn-sm" onclick="openEditProjectModal('${p.id}')">✏️ Edit</button>
+          <button class="btn-danger btn-sm" onclick="deleteProject('${p.id}')">Delete</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.openEditProjectModal = (id) => {
+  const project = allProjects.find(p => p.id === id);
+  if (!project) return;
+  
+  document.getElementById("editProjectId").value = id;
+  document.getElementById("editProjectTitle").value = project.title;
+  document.getElementById("editProjectPhase").value = project.phase;
+  document.getElementById("editProjectDescription").value = project.description || "";
+  document.getElementById("editProjectStartDate").value = project.startDate;
+  document.getElementById("editProjectEndDate").value = project.endDate;
+  document.getElementById("editProjectBudget").value = project.budget;
+  document.getElementById("editProjectSpent").value = project.spent;
+  document.getElementById("editProjectStatus").value = project.status;
+  
+  document.getElementById("editProjectModal").style.display = "block";
+};
+
+window.closeEditProjectModal = () => {
+  document.getElementById("editProjectModal").style.display = "none";
+};
+
+window.updateProject = async () => {
+  try {
+    const id = document.getElementById("editProjectId").value;
+    const title = document.getElementById("editProjectTitle").value.trim();
+    const phase = document.getElementById("editProjectPhase").value.trim();
+    const description = document.getElementById("editProjectDescription").value.trim();
+    const startDate = document.getElementById("editProjectStartDate").value;
+    const endDate = document.getElementById("editProjectEndDate").value;
+    const budget = parseFloat(document.getElementById("editProjectBudget").value);
+    const spent = parseFloat(document.getElementById("editProjectSpent").value);
+    const status = document.getElementById("editProjectStatus").value;
+    
+    if (!title || !startDate || !endDate || budget <= 0) {
+      showMessage("editProjectMessage", "Please fill in required fields", "error");
+      return;
+    }
+    
+    await updateDoc(doc(db, churchPath + "/projects", id), {
+      title,
+      phase,
+      description,
+      startDate,
+      endDate,
+      budget,
+      spent,
+      status,
+      updatedAt: serverTimestamp()
+    });
+    
+    showMessage("editProjectMessage", "Project updated!", "success");
+    setTimeout(() => closeEditProjectModal(), 1500);
+  } catch (error) {
+    showMessage("editProjectMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.deleteProject = async (id) => {
+  if (confirm("Delete this project?")) {
+    await deleteDoc(doc(db, churchPath + "/projects", id));
+    showMessage("projectMessage", "Project deleted", "success");
+  }
+};
+
+/* ================= FINANCE ================= */
+
+function updateFinanceStats() {
+  const totalGiving = allGiving.reduce((sum, g) => sum + (g.amount || 0), 0);
+  const totalExpenses = allExpenses.reduce((sum, e) => sum + (e.amount || 0), 0);
+  const netBalance = totalGiving - totalExpenses;
+  
+  document.getElementById("finTotalGiving").textContent = "K " + totalGiving.toFixed(2);
+  document.getElementById("finTotalExpenses").textContent = "K " + totalExpenses.toFixed(2);
+  document.getElementById("finNetBalance").textContent = "K " + netBalance.toFixed(2);
+}
+
+window.saveGiving = async () => {
+  try {
+    const date = document.getElementById("givingDate").value;
+    const type = document.getElementById("givingType").value;
+    const amount = parseFloat(document.getElementById("givingAmount").value);
+    
+    if (!date || !amount || amount <= 0) {
+      showMessage("givingMessage", "Please fill in all fields", "error");
+      return;
+    }
+    
+    await addDoc(collection(db, churchPath + "/giving"), {
+      date,
+      type,
+      amount,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("givingMessage", "Giving recorded!", "success");
+    document.getElementById("givingAmount").value = "";
+  } catch (error) {
+    showMessage("givingMessage", "Error: " + error.message, "error");
+  }
+};
+
+function loadGivingTable() {
+  const tbody = document.getElementById("givingTableBody");
+  if (!tbody) return;
+  
+  if (allGiving.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #999;">No giving records yet.</td></tr>';
+    return;
+  }
+  
+  const isAdmin = currentUserRole === "admin";
+  
+  tbody.innerHTML = allGiving.map(g => `
+    <tr>
+      <td>${new Date(g.date).toLocaleDateString('en-GB')}</td>
+      <td>${g.type}</td>
+      <td>K ${g.amount.toFixed(2)}</td>
+      ${isAdmin ? `<td>
+        <button class="btn-warning btn-sm" onclick="openEditGivingModal('${g.id}')">✏️ Edit</button>
+        <button class="btn-danger btn-sm" onclick="deleteGiving('${g.id}')">Delete</button>
+      </td>` : ''}
+    </tr>
+  `).join('');
+}
+
+window.openEditGivingModal = (id) => {
+  const giving = allGiving.find(g => g.id === id);
+  if (!giving) return;
+  
+  document.getElementById("editGivingId").value = id;
+  document.getElementById("editGivingDate").value = giving.date;
+  document.getElementById("editGivingType").value = giving.type;
+  document.getElementById("editGivingAmount").value = giving.amount;
+  
+  document.getElementById("editGivingModal").style.display = "block";
+};
+
+window.closeEditGivingModal = () => {
+  document.getElementById("editGivingModal").style.display = "none";
+};
+
+window.updateGiving = async () => {
+  try {
+    const id = document.getElementById("editGivingId").value;
+    const date = document.getElementById("editGivingDate").value;
+    const type = document.getElementById("editGivingType").value;
+    const amount = parseFloat(document.getElementById("editGivingAmount").value);
+    
+    if (!date || !amount || amount <= 0) {
+      showMessage("editGivingMessage", "Please fill in all fields", "error");
+      return;
+    }
+    
+    await updateDoc(doc(db, churchPath + "/giving", id), {
+      date,
+      type,
+      amount,
+      updatedAt: serverTimestamp()
+    });
+    
+    showMessage("editGivingMessage", "Giving updated!", "success");
+    setTimeout(() => closeEditGivingModal(), 1500);
+  } catch (error) {
+    showMessage("editGivingMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.deleteGiving = async (id) => {
+  if (confirm("Delete this giving record?")) {
+    await deleteDoc(doc(db, churchPath + "/giving", id));
+    showMessage("givingMessage", "Record deleted", "success");
+  }
+};
+
+window.saveExpense = async () => {
+  try {
+    const date = document.getElementById("expenseDate").value;
+    const category = document.getElementById("expenseCategory").value;
+    const amount = parseFloat(document.getElementById("expenseAmount").value);
+    const description = document.getElementById("expenseDescription").value.trim();
+    
+    if (!date || !amount || amount <= 0 || !description) {
+      showMessage("expenseMessage", "Please fill in all fields", "error");
+      return;
+    }
+    
+    await addDoc(collection(db, churchPath + "/expenses"), {
+      date,
+      category,
+      amount,
+      description,
+      createdAt: serverTimestamp(),
+      createdBy: currentUser.uid
+    });
+    
+    showMessage("expenseMessage", "Expense recorded!", "success");
+    document.getElementById("expenseAmount").value = "";
+    document.getElementById("expenseDescription").value = "";
+  } catch (error) {
+    showMessage("expenseMessage", "Error: " + error.message, "error");
+  }
+};
+
+function loadExpenseTable() {
+  const tbody = document.getElementById("expenseTableBody");
+  if (!tbody) return;
+  
+  if (allExpenses.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #999;">No expense records yet.</td></tr>';
+    return;
+  }
+  
+  const isAdmin = currentUserRole === "admin";
+  
+  tbody.innerHTML = allExpenses.map(e => `
+    <tr>
+      <td>${new Date(e.date).toLocaleDateString('en-GB')}</td>
+      <td>${e.category}</td>
+      <td>K ${e.amount.toFixed(2)}</td>
+      <td>${e.description}</td>
+      ${isAdmin ? `<td>
+        <button class="btn-warning btn-sm" onclick="openEditExpenseModal('${e.id}')">✏️ Edit</button>
+        <button class="btn-danger btn-sm" onclick="deleteExpense('${e.id}')">Delete</button>
+      </td>` : ''}
+    </tr>
+  `).join('');
+}
+
+window.openEditExpenseModal = (id) => {
+  const expense = allExpenses.find(e => e.id === id);
+  if (!expense) return;
+  
+  document.getElementById("editExpenseId").value = id;
+  document.getElementById("editExpenseDate").value = expense.date;
+  document.getElementById("editExpenseCategory").value = expense.category;
+  document.getElementById("editExpenseAmount").value = expense.amount;
+  document.getElementById("editExpenseDescription").value = expense.description;
+  
+  document.getElementById("editExpenseModal").style.display = "block";
+};
+
+window.closeEditExpenseModal = () => {
+  document.getElementById("editExpenseModal").style.display = "none";
+};
+
+window.updateExpense = async () => {
+  try {
+    const id = document.getElementById("editExpenseId").value;
+    const date = document.getElementById("editExpenseDate").value;
+    const category = document.getElementById("editExpenseCategory").value;
+    const amount = parseFloat(document.getElementById("editExpenseAmount").value);
+    const description = document.getElementById("editExpenseDescription").value.trim();
+    
+    if (!date || !amount || amount <= 0 || !description) {
+      showMessage("editExpenseMessage", "Please fill in all fields", "error");
+      return;
+    }
+    
+    await updateDoc(doc(db, churchPath + "/expenses", id), {
+      date,
+      category,
+      amount,
+      description,
+      updatedAt: serverTimestamp()
+    });
+    
+    showMessage("editExpenseMessage", "Expense updated!", "success");
+    setTimeout(() => closeEditExpenseModal(), 1500);
+  } catch (error) {
+    showMessage("editExpenseMessage", "Error: " + error.message, "error");
+  }
+};
+
+window.deleteExpense = async (id) => {
+  if (confirm("Delete this expense record?")) {
+    await deleteDoc(doc(db, churchPath + "/expenses", id));
+    showMessage("expenseMessage", "Record deleted", "success");
+  }
+};
+
+/* ================= ANALYTICS ================= */
+
+function updateAnalytics() {
+  renderMonthlyAttendanceChart();
+  renderQuarterlyAttendanceChart();
+  renderCategoryBreakdownChart();
+  renderProjectBudgetChart();
+  renderProjectStatusChart();
+  renderFinanceTrendChart();
+}
+
+function renderMonthlyAttendanceChart() {
+  const canvas = document.getElementById("monthlyAttendanceChart");
+  if (!canvas) return;
+  
+  if (charts.monthlyAttendance) charts.monthlyAttendance.destroy();
+  
+  const monthly = {};
+  allAttendance.forEach(a => {
+    const month = a.date.substring(0, 7);
+    if (!monthly[month]) monthly[month] = [];
+    monthly[month].push(a.total);
+  });
+  
+  const labels = Object.keys(monthly).sort().slice(-6);
+  const data = labels.map(m => {
+    const avg = monthly[m].reduce((sum, val) => sum + val, 0) / monthly[m].length;
+    return avg.toFixed(0);
+  });
+  
+  charts.monthlyAttendance = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels: labels.map(m => new Date(m + '-01').toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })),
+      datasets: [{
+        label: "Average Attendance",
+        data,
+        backgroundColor: "rgba(102, 126, 234, 0.8)",
+        borderColor: "#667eea",
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+function renderQuarterlyAttendanceChart() {
+  const canvas = document.getElementById("quarterlyAttendanceChart");
+  if (!canvas) return;
+  
+  if (charts.quarterlyAttendance) charts.quarterlyAttendance.destroy();
+  
+  const quarterly = {};
+  allAttendance.forEach(a => {
+    const date = new Date(a.date);
+    const year = date.getFullYear();
+    const quarter = Math.floor(date.getMonth() / 3) + 1;
+    const key = `${year}-Q${quarter}`;
+    if (!quarterly[key]) quarterly[key] = [];
+    quarterly[key].push(a.total);
+  });
+  
+  const labels = Object.keys(quarterly).sort().slice(-4);
+  const data = labels.map(q => {
+    const avg = quarterly[q].reduce((sum, val) => sum + val, 0) / quarterly[q].length;
+    return avg.toFixed(0);
+  });
+  
+  charts.quarterlyAttendance = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Quarterly Average",
+        data,
+        borderColor: "#764ba2",
+        backgroundColor: "rgba(118, 75, 162, 0.1)",
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+function renderCategoryBreakdownChart() {
+  const canvas = document.getElementById("categoryBreakdownChart");
+  if (!canvas) return;
+  
+  if (charts.categoryBreakdown) charts.categoryBreakdown.destroy();
+  
+  const totals = {
+    men: 0,
+    women: 0,
+    youth: 0,
+    children: 0,
+    visitors: 0
+  };
+  
+  allAttendance.forEach(a => {
+    totals.men += a.men;
+    totals.women += a.women;
+    totals.youth += a.youth;
+    totals.children += a.children;
+    totals.visitors += a.visitors;
+  });
+  
+  charts.categoryBreakdown = new Chart(canvas, {
+    type: "doughnut",
+    data: {
+      labels: ["Men", "Women", "Youth", "Children", "Visitors"],
+      datasets: [{
+        data: Object.values(totals),
+        backgroundColor: [
+          "#667eea",
+          "#764ba2",
+          "#4CAF50",
+          "#FF9800",
+          "#2196F3"
+        ]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function renderProjectBudgetChart() {
+  const canvas = document.getElementById("projectBudgetChart");
+  if (!canvas) return;
+  
+  if (charts.projectBudget) charts.projectBudget.destroy();
+  
+  const labels = allProjects.map(p => p.title);
+  const budgets = allProjects.map(p => p.budget);
+  const spent = allProjects.map(p => p.spent);
+  
+  charts.projectBudget = new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label: "Budget",
+          data: budgets,
+          backgroundColor: "rgba(76, 175, 80, 0.5)",
+          borderColor: "#4CAF50",
+          borderWidth: 2
+        },
+        {
+          label: "Spent",
+          data: spent,
+          backgroundColor: "rgba(244, 67, 54, 0.5)",
+          borderColor: "#F44336",
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+function renderProjectStatusChart() {
+  const canvas = document.getElementById("projectStatusChart");
+  if (!canvas) return;
+  
+  if (charts.projectStatus) charts.projectStatus.destroy();
+  
+  const statusCounts = {
+    "not-started": 0,
+    "ongoing": 0,
+    "complete": 0
+  };
+  
+  allProjects.forEach(p => {
+    statusCounts[p.status]++;
+  });
+  
+  charts.projectStatus = new Chart(canvas, {
+    type: "pie",
+    data: {
+      labels: ["Not Started", "Ongoing", "Complete"],
+      datasets: [{
+        data: Object.values(statusCounts),
+        backgroundColor: ["#9E9E9E", "#2196F3", "#4CAF50"]
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+}
+
+function renderFinanceTrendChart() {
+  const canvas = document.getElementById("financeTrendChart");
+  if (!canvas) return;
+  
+  if (charts.financeTrend) charts.financeTrend.destroy();
+  
+  const monthlyGiving = {};
+  const monthlyExpenses = {};
+  
+  allGiving.forEach(g => {
+    const month = g.date.substring(0, 7);
+    monthlyGiving[month] = (monthlyGiving[month] || 0) + g.amount;
+  });
+  
+  allExpenses.forEach(e => {
+    const month = e.date.substring(0, 7);
+    monthlyExpenses[month] = (monthlyExpenses[month] || 0) + e.amount;
+  });
+  
+  const allMonths = [...new Set([...Object.keys(monthlyGiving), ...Object.keys(monthlyExpenses)])].sort();
+  const last6Months = allMonths.slice(-6);
+  
+  const givingData = last6Months.map(m => monthlyGiving[m] || 0);
+  const expenseData = last6Months.map(m => monthlyExpenses[m] || 0);
+  const netData = last6Months.map((m, i) => givingData[i] - expenseData[i]);
+  
+  charts.financeTrend = new Chart(canvas, {
+    type: "line",
+    data: {
+      labels: last6Months.map(m => new Date(m + '-01').toLocaleDateString('en-GB', { month: 'short' })),
+      datasets: [
+        {
+          label: "Giving",
+          data: givingData,
+          borderColor: "#4CAF50",
+          backgroundColor: "rgba(76, 175, 80, 0.1)",
+          tension: 0.4
+        },
+        {
+          label: "Expenses",
+          data: expenseData,
+          borderColor: "#F44336",
+          backgroundColor: "rgba(244, 67, 54, 0.1)",
+          tension: 0.4
+        },
+        {
+          label: "Net",
+          data: netData,
+          borderColor: "#667eea",
+          backgroundColor: "rgba(102, 126, 234, 0.1)",
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+/* ================= TAB NAVIGATION ================= */
+
+window.showTab = (tabName) => {
+  document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(content => content.classList.remove("active"));
+  
+  event.target.classList.add("active");
+  document.getElementById(tabName + "-tab").classList.add("active");
+};
+
+/* ================= UTILITIES ================= */
+
+function showMessage(elementId, message, type) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  
+  el.innerHTML = `<div class="message message-${type}">${message}</div>`;
+  setTimeout(() => el.innerHTML = "", 5000);
+}
+
+function setTodayDates() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById("attendanceDate").value = today;
+  document.getElementById("givingDate").value = today;
+  document.getElementById("expenseDate").value = today;
+  document.getElementById("projectStartDate").value = today;
+  document.getElementById("visitDate").value = today;
+  document.getElementById("membershipDate").value = today;
+}
+
+console.log("✅ Restitution Church Management Dashboard loaded!");
+
+</script>
+</body>
+</html>
